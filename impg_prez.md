@@ -5,9 +5,7 @@ author: Erik Garrison
 date: SMBE 2024
 ---
 
-# 1. Introduction
-
-## Introduction: What are Pangenome Graphs?
+# What are Pangenome Graphs?
 
 - Model full genomic information of a species or clade
 - Represent mutual relationships between all genomes
@@ -15,7 +13,7 @@ date: SMBE 2024
 
 ---
 
-## Introduction: Limitations of Current Methods
+# Limitations of Current Methods
 
 - Reference bias in traditional approaches
   - Analyses limited to sequences similar to chosen reference
@@ -25,7 +23,7 @@ date: SMBE 2024
 
 ---
 
-## Introduction: The Need for Unbiased Pangenome Graphs
+# The Need for Unbiased Pangenome Graphs
 
 - Represent alignment of all genomes to all others
 - Avoid limitations of:
@@ -35,9 +33,7 @@ date: SMBE 2024
 
 ---
 
-# 2. The Challenge in Comparative Genomics
-
-## The Challenge: Existing Methods (Cactus)
+# Existing Methods: Cactus
 
 - Based on phylogenetic trees
 - Provides scalability for multiple genome alignment
@@ -47,7 +43,7 @@ date: SMBE 2024
 
 ---
 
-## The Challenge: Direct Graph Creation Problems
+# Direct Graph Creation Problems
 
 - Computationally intensive ("graphs are STICKY")
 - High memory requirements for loading entire graph
@@ -57,7 +53,7 @@ date: SMBE 2024
 
 ---
 
-## The Challenge: Need for a Scalable, Unbiased Approach
+# Need for a Scalable, Unbiased Approach
 
 - Handle tens to thousands of genomes
 - Avoid reference bias and input order dependency
@@ -66,9 +62,7 @@ date: SMBE 2024
 
 ---
 
-# 3. Implicit Data Structures
-
-## Implicit Data Structures: Concept
+# Concept of Implicit Data Structures
 
 - Simulate full data structure without instantiating it
 - Provide interface to query as if full structure exists
@@ -78,7 +72,7 @@ date: SMBE 2024
 
 ---
 
-## Implicit Data Structures: Benefits
+# Benefits of Implicit Data Structures
 
 - Memory efficiency
   - Avoid storing entire structure in memory
@@ -89,9 +83,7 @@ date: SMBE 2024
 
 ---
 
-# 4. The Implicit Pangenome Graph Concept
-
-## Implicit Pangenome Graph: Core Idea
+# Core Idea of Implicit Pangenome Graphs
 
 - Graph implied by set of pairwise alignments
 - Never materialize the full graph structure
@@ -99,7 +91,7 @@ date: SMBE 2024
 
 ---
 
-## Implicit Pangenome Graph: Key Components
+# Key Components of Implicit Pangenome Graphs
 
 1. Intervals as alignment ranges over target references
    - Efficient representation of matches between sequences
@@ -108,7 +100,7 @@ date: SMBE 2024
 
 ---
 
-## Implicit Pangenome Graph: Mathematical Foundation
+# Mathematical Foundation
 
 - Transitive closure of matches
   - m+ = {i...j}, set of characters transitively linked by matches
@@ -117,7 +109,7 @@ date: SMBE 2024
 
 ---
 
-## Implicit Pangenome Graph: Advantages
+# Advantages of Implicit Pangenome Graphs
 
 - Reduced memory requirements
   - Only store alignments, not full graph structure
@@ -128,40 +120,39 @@ date: SMBE 2024
 
 ---
 
-# 5. impg: Implementation
-
-## impg Implementation: Tool Architecture
+# impg Tool Architecture
 
 - Input: bgzip-compressed PAF file of alignments
 - Output: BED, BEDPE, PAF formats
 - Core components:
-  - Sequence indexing (seqidx)
+  - Sequence indexing (SequenceIndex)
   - Alignment processing
   - Coordinate translation
 
 ---
 
-## impg Implementation: Key Data Structures
+# Key Data Structures in impg
 
-- Implicit interval tree
+- BasicCOITree (Compact Overlapping Interval Tree)
   - Efficient range queries on alignments
-- Compressed suffix array (CSA)
-  - Fast sequence name lookup
-- Disk-backed sequence storage
-  - Efficient random access to input sequences
+- SequenceIndex
+  - Maps between sequence names and numeric IDs
+  - Stores sequence lengths
+- Disk-backed data structures
+  - Efficient handling of large datasets
 
 ---
 
-## impg Implementation: Core Operations
+# Core Operations in impg
 
-1. Stabbing query on the implicit interval tree
+1. Stabbing query on the BasicCOITree
    - Find overlapping alignments efficiently
 2. CIGAR string traversal for position-level translation
    - Dynamic parsing of CIGARs for coordinate projection
 
 ---
 
-## impg Implementation: Transitive Collection
+# Transitive Collection in impg
 
 - Algorithm for collecting all mutually aligned sequences
 - Steps:
@@ -171,7 +162,7 @@ date: SMBE 2024
 
 ---
 
-## impg Implementation: Optimizations
+# Optimizations in impg
 
 - Match compression
   - Reduce memory usage by encoding runs of matches
@@ -182,7 +173,7 @@ date: SMBE 2024
 
 ---
 
-## impg Implementation: Comparison to seqwish
+# Comparison of impg to seqwish
 
 - Similarities:
   - Both work with pairwise alignments
@@ -193,9 +184,7 @@ date: SMBE 2024
 
 ---
 
-# 6. Applications and Results
-
-## Applications: T2T Primate Project Overview
+# T2T Primate Project Overview
 
 - All-vs-all alignment of primate genomes
   - Includes human, chimpanzee, bonobo, gorilla, orangutan
@@ -204,7 +193,7 @@ date: SMBE 2024
 
 ---
 
-## Applications: Pangenome Alignment Process
+# Pangenome Alignment Process
 
 1. Iterative all-vs-one approach using wfmash
    - MashMap3 for initial mapping
@@ -214,7 +203,7 @@ date: SMBE 2024
 
 ---
 
-## Applications: Subgraph Analysis - MHC Locus
+# Subgraph Analysis: MHC Locus
 
 - Extraction process using impg
   - Command: `impg -p primates16.20231205_wfmash-v0.12.5/chm13#1.aln.paf -q chm13#1#chr6:28385000-33300000`
@@ -224,7 +213,7 @@ date: SMBE 2024
 
 ---
 
-## Applications: Subgraph Analysis - 8p23.1 Inversion
+# Subgraph Analysis: 8p23.1 Inversion
 
 - Defensin gene content and polymorphism
 - Graph construction using pggb
@@ -234,7 +223,7 @@ date: SMBE 2024
 
 ---
 
-## Applications: SNP vs. Gap Divergence Analysis
+# SNP vs. Gap Divergence Analysis
 
 - Computation method:
   - 1MB segments across target haplotype
@@ -246,7 +235,7 @@ date: SMBE 2024
 
 ---
 
-## Applications: Conservation Analyses
+# Conservation Analyses
 
 - PhastCons approach:
   1. Default parameters (unsupervised EM learning)
@@ -261,19 +250,20 @@ date: SMBE 2024
 
 ---
 
-# 7. Future Directions
+# Current Limitations and Future Work
 
-## Future Directions: Total Subdivising Algorithm
-
-- Generalization of the seqwish algorithm
-- Goal: Enable distributed construction of large comparative genomic pangenome graphs
+- Implementation focuses on range queries, not string matching
+- FASTA sequence extraction not currently implemented
+- Potential for improved handling of different alignment formats
+- Development of a total subdivising algorithm
+  - Goal: Enable distributed construction of large comparative genomic pangenome graphs
 - Challenges:
   - Maintaining consistency across distributed components
   - Efficient merging of partial graphs
 
 ---
 
-## Future Directions: Potential Applications
+# Potential Applications
 
 - Analysis of structural variants across species
   - Identify conserved and species-specific SVs
@@ -284,7 +274,7 @@ date: SMBE 2024
 
 ---
 
-## Future Directions: Integration with Other Tools
+# Integration with Other Tools
 
 - Combination with multiple sequence alignment tools
   - Refine alignments in complex regions
@@ -295,7 +285,7 @@ date: SMBE 2024
 
 ---
 
-## Future Directions: Scaling to Larger Datasets
+# Scaling to Larger Datasets
 
 - Strategies for handling thousands of genomes
   - Improved partitioning and distributed processing
@@ -306,19 +296,18 @@ date: SMBE 2024
 
 ---
 
-# 8. Conclusion
-
-## Conclusion: Recap of Implicit Pangenome Graphs
+# Recap of Implicit Pangenome Graphs
 
 - Key advantages:
   - Scalability to large numbers of genomes
   - Flexibility in representation and updates
   - Unbiased representation of genomic relationships
 - Overcomes limitations of traditional approaches
+- Efficient range queries using BasicCOITree
 
 ---
 
-## Conclusion: Impact on Comparative Genomics
+# Impact on Comparative Genomics
 
 - Revolutionizing analysis of genomic relationships
   - Enables unbiased, large-scale comparisons
@@ -327,7 +316,7 @@ date: SMBE 2024
 
 ---
 
-## Conclusion: Call for Collaboration
+# Call for Collaboration
 
 - Open-source project: https://github.com/ekg/impg
 - Opportunities for:
