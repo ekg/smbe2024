@@ -5,21 +5,14 @@ author: Erik Garrison
 date: SMBE 2024
 ---
 
-# What are Pangenome Graphs?
+# Introduction to Pangenome Graphs
 
 - Model full genomic information of a species or clade
 - Represent mutual relationships between all genomes
 - Encode DNA sequences as walks through a sequence graph
-
----
-
-# Limitations of Current Methods
-
-- Reference bias in traditional approaches
-  - Analyses limited to sequences similar to chosen reference
-- Challenges with tree-based methods
-  - Dependent on specific ordering of genomes
-  - Guide tree topology affects results
+- Current limitations:
+  - Reference bias in traditional approaches
+  - Challenges with tree-based methods
 
 ---
 
@@ -30,35 +23,10 @@ date: SMBE 2024
   - Single reference genomes
   - Progressive alignment approaches
   - Fixed k-mer length de Bruijn graphs
-
----
-
-# Existing Methods: Cactus
-
-- Based on phylogenetic trees
-- Provides scalability for multiple genome alignment
-- Limitations:
-  - Changing included genomes affects aligned regions
-  - Guide tree biases Incomplete Lineage Sorting (ILS) detection
-
----
-
-# Direct Graph Creation Problems
-
-- Computationally intensive ("graphs are STICKY")
-- High memory requirements for loading entire graph
-- Real-world example:
-  - 35-day attempt with 16 T2T great ape genomes
-  - Ended in failure due to power outage
-
----
-
-# Need for a Scalable, Unbiased Approach
-
-- Handle tens to thousands of genomes
-- Avoid reference bias and input order dependency
-- Allow efficient updates with new genomes
-- Operate on commodity hardware
+- Direct graph creation problems:
+  - Computationally intensive ("graphs are STICKY")
+  - High memory requirements
+  - Example: 35-day failed attempt with 16 T2T great ape genomes
 
 ---
 
@@ -69,17 +37,10 @@ date: SMBE 2024
 - Example: Implicit interval tree
   - Used in bedtools and alignment algorithms
   - Efficient for range overlap queries
-
----
-
-# Benefits of Implicit Data Structures
-
-- Memory efficiency
-  - Avoid storing entire structure in memory
-- Scalability to large datasets
-  - Can handle data larger than available RAM
-- Fast query operations
-  - Often logarithmic time complexity
+- Benefits:
+  - Memory efficiency
+  - Scalability to large datasets
+  - Fast query operations
 
 ---
 
@@ -88,15 +49,9 @@ date: SMBE 2024
 - Graph implied by set of pairwise alignments
 - Never materialize the full graph structure
 - Dynamically compute graph properties on-the-fly
-
----
-
-# Key Components of Implicit Pangenome Graphs
-
-1. Intervals as alignment ranges over target references
-   - Efficient representation of matches between sequences
-2. Coordinate translation as the fundamental operation
-   - Projecting coordinates between different genomes
+- Key components:
+  1. Intervals as alignment ranges over target references
+  2. Coordinate translation as the fundamental operation
 
 ---
 
@@ -106,17 +61,10 @@ date: SMBE 2024
   - m+ = {i...j}, set of characters transitively linked by matches
 - Union-find operations for match closures
   - Efficiently compute transitive closures
-
----
-
-# Advantages of Implicit Pangenome Graphs
-
-- Reduced memory requirements
-  - Only store alignments, not full graph structure
-- Scalability to large numbers of genomes
-  - Can handle hundreds or thousands of genomes
-- Flexibility in representation of genomic relationships
-  - Easy to update with new genomes or alignments
+- Advantages:
+  - Reduced memory requirements
+  - Scalability to large numbers of genomes
+  - Flexibility in representation and updates
 
 ---
 
@@ -128,18 +76,10 @@ date: SMBE 2024
   - Sequence indexing (SequenceIndex)
   - Alignment processing
   - Coordinate translation
-
----
-
-# Key Data Structures in impg
-
-- BasicCOITree (Compact Overlapping Interval Tree)
-  - Efficient range queries on alignments
-- SequenceIndex
-  - Maps between sequence names and numeric IDs
-  - Stores sequence lengths
-- Disk-backed data structures
-  - Efficient handling of large datasets
+- Key data structures:
+  - BasicCOITree (Compact Overlapping Interval Tree)
+  - SequenceIndex
+  - Disk-backed data structures
 
 ---
 
@@ -149,38 +89,21 @@ date: SMBE 2024
    - Find overlapping alignments efficiently
 2. CIGAR string traversal for position-level translation
    - Dynamic parsing of CIGARs for coordinate projection
+3. Transitive collection of aligned sequences
+   - Recursive collection and projection of coordinates
 
 ---
 
-# Transitive Collection in impg
+# Optimizations and Comparison to seqwish
 
-- Algorithm for collecting all mutually aligned sequences
-- Steps:
-  1. Initial query for overlapping alignments
-  2. Recursive collection of transitively aligned sequences
-  3. Projection of coordinates through alignments
-
----
-
-# Optimizations in impg
-
-- Match compression
-  - Reduce memory usage by encoding runs of matches
-- Partitioning for parallel processing
-  - Divide work into chunks for multi-threaded execution
-- Disk-backed data structures
-  - Use external memory to handle large datasets
-
----
-
-# Comparison of impg to seqwish
-
-- Similarities:
+- Optimizations in impg:
+  - Match compression
+  - Partitioning for parallel processing
+  - Disk-backed data structures
+- Comparison to seqwish:
   - Both work with pairwise alignments
   - Use transitive closures of matches
-- Differences:
-  - seqwish materializes the graph
-  - impg keeps the graph implicit
+  - seqwish materializes the graph, impg keeps it implicit
 
 ---
 
@@ -189,17 +112,10 @@ date: SMBE 2024
 - All-vs-all alignment of primate genomes
   - Includes human, chimpanzee, bonobo, gorilla, orangutan
 - Incorporation of HPRC year 1 human genome assemblies
-- Goal: Create a comprehensive primate pangenome resource
-
----
-
-# Pangenome Alignment Process
-
-1. Iterative all-vs-one approach using wfmash
-   - MashMap3 for initial mapping
-   - Filtering and merging of mappings
-2. Base-level alignment with wavefront algorithm
-3. Conversion to CHAIN format using paf2chain
+- Pangenome alignment process:
+  1. Iterative all-vs-one approach using wfmash
+  2. Base-level alignment with wavefront algorithm
+  3. Conversion to CHAIN format using paf2chain
 
 ---
 

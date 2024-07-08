@@ -1,0 +1,38 @@
+\ProvidesPackage{metropolis-bw}
+
+\mode<presentation>
+
+\usetheme{metropolis}
+
+% Set main colors
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=black}
+\setbeamercolor{frametitle}{bg=white,fg=black}
+\setbeamercolor{title}{bg=white,fg=black}
+\setbeamercolor{section title}{bg=white,fg=black}
+\setbeamercolor{alerted text}{fg=black}
+\setbeamercolor{example text}{fg=black}
+\setbeamercolor{standout}{bg=white,fg=black}
+
+% Remove the progress bar
+\setbeamercolor{progress bar}{fg=white,bg=white}
+
+% Adjust footer
+\setbeamercolor{footline}{fg=black,bg=white}
+\setbeamerfont{footline}{size=\footnotesize}
+
+% Remove the black bar at the bottom
+\setbeamertemplate{footline}{
+    \begin{beamercolorbox}[wd=\textwidth,ht=3ex,dp=1.5ex,leftskip=.3cm,rightskip=.3cm]{footline}
+        \usebeamerfont{footline}
+        \hfill\insertframenumber
+    \end{beamercolorbox}
+}
+
+% Ensure title page elements are visible
+\setbeamercolor{title page}{fg=black,bg=white}
+\setbeamercolor{author}{fg=black}
+\setbeamercolor{date}{fg=black}
+\setbeamercolor{institute}{fg=black}
+
+\mode<all>
